@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sedat Elektrik Finans</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 select-none antialiased">
+  <div id="app" class="max-w-md mx-auto min-h-screen bg-slate-50 flex flex-col relative shadow-2xl">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 px-5 pt-12 pb-4 flex justify-between items-center sticky top-0 z-10">
+      <div>
+        <p class="text-xs text-gray-500 font-medium">Hoş Geldiniz</p>
+        <h1 class="text-xl font-bold text-gray-900">Sedat Elektrik</h1>
+      </div>
+      <button onclick="addTransactionPrompt()" class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition">
+        <i data-lucide="plus" class="w-6 h-6"></i>
+      </button>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 p-4 pb-28 space-y-4 overflow-y-auto">
+      <!-- Balance Card -->
+      <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-5 rounded-2xl shadow-xl">
+        <p class="text-xs text-blue-100 font-medium tracking-wide uppercase">Toplam Varlık</p>
+        <h2 id="total-balance" class="text-3xl font-extrabold mt-1">₺239,900</h2>
+        <div class="grid grid-cols-2 gap-3 mt-6 pt-4 border-t border-white/20 text-sm">
+          <div>
+            <p class="text-xs text-blue-200">Aylık Gelir</p>
+            <p id="total-income" class="font-bold text-emerald-300">₺185,000</p>
+          </div>
+          <div>
+            <p class="text-xs text-blue-200">Aylık Gider</p>
+            <p id="total-expense" class="font-bold text-rose-300">₺74,200</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+          <p class="text-xs text-gray-500">Bekleyen Tahsilat</p>
+          <p class="text-lg font-bold text-emerald-600 mt-1">₺48,500</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+          <p class="text-xs text-gray-500">Bekleyen Ödeme</p>
+          <p class="text-lg font-bold text-rose-600 mt-1">₺26,000</p>
+        </div>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+        <h3 class="font-bold text-gray-800 text-sm mb-3">Son İşlemler</h3>
+        <div id="transaction-list" class="space-y-3"></div>
+      </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/80 backdrop-blur-md border-t border-gray-200 px-6 py-2 pb-6 flex justify-between text-xs text-gray-500 z-20">
+      <button class="flex flex-col items-center text-blue-600 font-semibold">
+        <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+        <span class="mt-1">Özet</span>
+      </button>
+      <button class="flex flex-col items-center">
+        <i data-lucide="arrow-left-right" class="w-6 h-6"></i>
+        <span class="mt-1">İşlemler</span>
+      </button>
+      <button class="flex flex-col items-center">
+        <i data-lucide="users" class="w-6 h-6"></i>
+        <span class="mt-1">Cariler</span>
+      </button>
+      <button class="flex flex-col items-center">
+        <i data-lucide="wallet" class="w-6 h-6"></i>
+        <span class="mt-1">Hesaplar</span>
+      </button>
+    </nav>
+  </div>
+
+  <script>
+    let transactions = [
+      { id: 1, title: 'Malzeme Satışı', category: 'Satış', amount: 15400, type: 'income', date: 'Bugün' },
+      { id: 2, title: 'Kira Ödemesi', category: 'Kira', amount: -8500, type: 'expense', date: 'Dün' },
+      { id: 3, title: 'Kablo Tedariği', category: 'Tedarikçi', amount: -12300, type: 'expense', date: '03 Ekm' }
+    ];
+
+    function renderTransactions() {
+      const list = document.getElementById('transaction-list');
+      list.innerHTML = transactions.map(t => `
+        <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-none">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full ${t.type === 'income' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} flex items-center justify-center">
+              <i data-lucide="${t.type === 'income' ? 'arrow-down-left' : 'arrow-up-right'}" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <p class="font-semibold text-sm text-gray-800">${t.title}</p>
+              <p class="text-xs text-gray-400">${t.category} • ${t.date}</p>
+            </div>
+          </div>
+          <p class="font-bold text-sm ${t.type === 'income' ? 'text-emerald-600' : 'text-gray-900'}">
+            ${t.type === 'income' ? '+' : ''}₺${Math.abs(t.amount).toLocaleString('tr-TR')}
+          </p>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function addTransactionPrompt() {
+      const title = prompt("İşlem Başlığı:");
+      if (!title) return;
+      const amount = parseFloat(prompt("Tutar (₺):"));
+      if (isNaN(amount)) return;
+      const type = amount >= 0 ? 'income' : 'expense';
+
+      transactions.unshift({
+        id: Date.now(),
+        title: title,
+        category: 'Genel',
+        amount: amount,
+        type: type,
+        date: 'Şimdi'
+      });
+      renderTransactions();
+    }
+
+    renderTransactions();
+  </script>
+</body>
+</html>
